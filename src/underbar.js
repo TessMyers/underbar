@@ -5,7 +5,7 @@ var _ = {};
 (function() {
 
   _.identity = function(val) {
-    return val
+    return val;
   };
 
   _.first = function(array, n) {
@@ -59,7 +59,7 @@ var _ = {};
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
-    return _.filter(collection, function(item){ if (!test(item)) return item })
+    return _.filter(collection, function(item){ if (!test(item)) return item });
   };
 
   // Produce a duplicate-free version of the array.
@@ -106,7 +106,7 @@ var _ = {};
  };
 
   _.reduce = function(collection, iterator, accumulator) {
-    var sum = typeof accumulator != 'undefined' ? accumulator : collection[0]
+    var sum = typeof accumulator != 'undefined' ? accumulator : collection[0];
     for (var i = 0; i < collection.length; i++ ) {
       sum = iterator(sum, collection[i]);
     }
@@ -115,26 +115,51 @@ var _ = {};
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
-    // TIP: Many iteration problems can be most easily expressed in
-    // terms of reduce(). Here's a freebie to demonstrate!
-    return _.reduce(collection, function(wasFound, item) {
+    if (Object.prototype.toString.call(collection) == "[object Object]") {
+      var wasFound = false;
+      for (var x in collection) {
+        if (x === target);
+          wasFound = true;
+      }
+      return wasFound;
+    } else {
+      return _.reduce(collection, function(wasFound, item) {
       if (wasFound) {
         return true;
       }
-      return item === target;
-    }, false);
+        return item === target;
+      }, false);
+    }
   };
 
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+    var callback = typeof iterator != 'undefined' ? iterator : _.identity;
+    return _.reduce(collection, function(passed, item) {
+      if (passed === false){
+        return false;
+      } else if (!callback(item)){
+        return false;
+      } else {
+        return true;
+      }
+    }, true);
   };
+
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
-    // TIP: There's a very clever way to re-use every() here.
+    // it really doesn't seem necessary to reuse reduce here, though it can be done.
+    var callback = typeof iterator != 'undefined' ? iterator : _.identity;
+    var retval = false;
+    _.each(collection, function (item){
+      if (callback(item)) {
+        retval = true
+      }
+    })
+    return retval;
   };
 
 
@@ -157,11 +182,25 @@ var _ = {};
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    for (var i = 0; i < arguments.length; i++){
+      for(var key in arguments[i]) {
+        obj[key] = arguments[i][key];
+      }
+    }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    for (var i = 0; i < arguments.length; i++){
+      for(var key in arguments[i]) {
+        if (typeof obj[key] === 'undefined') {
+          obj[key] = arguments[i][key];
+        }
+      }
+    }
+    return obj;
   };
 
 
@@ -187,7 +226,7 @@ var _ = {};
     return function() {
       if (!alreadyCalled) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
-        // infromation from one function call to another.
+        // information from one function call to another.
         result = func.apply(this, arguments);
         alreadyCalled = true;
       }
