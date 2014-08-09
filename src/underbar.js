@@ -241,7 +241,13 @@ var _ = {};
   // _.memoize should return a function that when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
-  _.memoize = function(func) {
+
+_.memoize = function(func) {
+    var memo = {};
+    return function(){
+      var key = _.identity.apply(this, arguments);
+      return typeof memo[key] === 'undefined' ? (memo[key] = func.apply(this, arguments)) : memo[key];
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -251,6 +257,8 @@ var _ = {};
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments,2);
+    return setTimeout(function(){ return func.apply(null, args); }, wait);
   };
 
 
