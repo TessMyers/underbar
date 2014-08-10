@@ -273,6 +273,23 @@ _.memoize = function(func) {
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var newArr = array.slice(0,(array.length));
+    var shuffleArray = [];
+    var pattern = [];
+
+    // make a pattern for the new order
+    while (pattern.length < newArr.length ){
+      var newIndex = Math.floor(Math.random() * (newArr.length-1 - 0 + 1)) + 0;
+
+      if (pattern.indexOf(newIndex) === -1) {
+        pattern.push(newIndex);
+      }
+    }
+    // Assign new index stored in pattern to each item of the array
+    for (var i = 0; i < newArr.length; i++){
+      shuffleArray[pattern[i]] = newArr[i];
+    }
+    return shuffleArray;
   };
 
 
